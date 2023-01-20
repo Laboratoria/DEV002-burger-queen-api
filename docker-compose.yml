@@ -1,0 +1,40 @@
+version: "3"
+services:
+  db:
+    # TODO: configura tu imagen de base de datos, te recomendamos una de estas:
+    # https://hub.docker.com/_/mongo
+    # https://hub.docker.com/_/postgres
+    # https://hub.docker.com/_/mysql
+    networks:
+      - private
+  node:
+    image: node:12 # https://hub.docker.com/_/node/
+    user: node
+    working_dir: /home/node/app
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+      DB_URL: <CONNECTION STRING>
+      JWT_SECRET: xxxxxxxx
+      ADMIN_EMAIL: admin@localhost
+      ADMIN_PASSWORD: changeme
+    volumes:
+      - ./:/home/node/app # montamos el codigo en el HOME del usuario _node_
+    expose:
+      - 8080 # nuestra app corre en el puerto 8080
+    ports:
+      # mapeamos el puerto 8080 de nuestro contenedor al puerto 80 de nuestra
+      # máquina
+      - 80:8080
+    # reinstalamos las dependencias y levantamos el servidor
+    command: bash -c 'rm -rf node_modules && npm install && npm start'
+    depends_on:
+      - db
+    networks:
+      - public
+      - private
+networks:
+  public:
+    internal: false
+  private:
+    internal: true
