@@ -76,6 +76,8 @@ module.exports = (app, next) => {
    */
   app.get('/users', requireAdmin, getUsers);
 
+  /* CABECERA = HEADERS */
+  /* OBTENCIÓN de usuario */
   /**
    * @name GET /users/:uid
    * @description Obtiene información de una usuaria
@@ -93,8 +95,14 @@ module.exports = (app, next) => {
    * @code {404} si la usuaria solicitada no existe
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
+    /* enviar código errores */
+    resp.status(200).send('autenticación es correcta')
+    resp.status(401).send('no hay cabecera de autenticación')
+    resp.status(403).send('usuaria no es administradora o no es la misma')
+    resp.status(404).send('usuaria no existe')
   });
 
+  /* CREACIÓN de usuario */
   /**
    * @name POST /users
    * @description Crea una usuaria
@@ -117,6 +125,7 @@ module.exports = (app, next) => {
   app.post('/users', requireAdmin, (req, resp, next) => {
   });
 
+  /* ACTUALIZACIÓN de usuario */
   /**
    * @name PUT /users
    * @description Modifica una usuaria
@@ -142,6 +151,7 @@ module.exports = (app, next) => {
   app.put('/users/:uid', requireAuth, (req, resp, next) => {
   });
 
+  /* ELIMINACIÓN de usuario */
   /**
    * @name DELETE /users
    * @description Elimina una usuaria

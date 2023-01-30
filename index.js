@@ -4,6 +4,13 @@ const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
+/*
+const http = require('http')
+para ver los métodos http que se pueden usar:
+console.log(http.METHODS) 
+para ver los status
+console.log(http.STATUS_CODES) 
+*/
 
 const { port, dbUrl, secret } = config;
 const app = express();
@@ -13,6 +20,11 @@ const app = express();
 app.set('config', config);
 app.set('pkg', pkg);
 
+/* .urlencoded cuando es { extended: true } permite ingresar a información de los formularios,
+cuando es { extended: false } es lo contrario */
+/* .json() funciona muy similar a lo de .urlencoded pero con json */
+/* .use() acepta una función con 3 parámetros -req, res, next-
+por lo que no es encesario colocarle () a la función que cumple con esos parámetros*/
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
