@@ -24,7 +24,7 @@ module.exports = (app, nextMain) => {
       return next(400);
     }
 
-    // TODO: autenticar a la usuarix
+    // TODO: autenticar a la usuarix | generar token req.token()
     next();
   });
 

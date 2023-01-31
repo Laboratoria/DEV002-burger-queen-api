@@ -2,9 +2,13 @@ version: "3"
 services:
   db:
     # TODO: configura tu imagen de base de datos, te recomendamos una de estas:
-    # https://hub.docker.com/_/mongo
     # https://hub.docker.com/_/postgres
-    # https://hub.docker.com/_/mysql
+    image: postgres:13
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: secret #cambiar y dejar secreta o con la que correspone
+    restart: always
     networks:
       - private
   node:
@@ -14,7 +18,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
-      DB_URL: <CONNECTION STRING>
+      DB_URL: <CONNECTION STRING> #postgresql://postgres:secret@db:5432/postgres?schema=public
       JWT_SECRET: xxxxxxxx
       ADMIN_EMAIL: admin@localhost
       ADMIN_PASSWORD: changeme

@@ -4,6 +4,8 @@ const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
+const pg = require("pg");
+const config = require("./config");
 /*
 const http = require('http')
 para ver los métodos http que se pueden usar:
@@ -16,6 +18,13 @@ const { port, dbUrl, secret } = config;
 const app = express();
 
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
+const pgClient = new pg.Client({ connectionString: config.dbUrl });
+
+pgClient.connect();
+pgClient.query("SELECT NOW()", (err, res) => {
+  console.log(err, res);
+  pgClient.end();
+});
 
 app.set('config', config);
 app.set('pkg', pkg);
