@@ -2,15 +2,15 @@ const { Client } = require('pg')
 const config = require('../config');
 const pgClient = new Client({ connectionString: config.dbUrl });
 
-// Funcion para obtener el listado de todos los usuarios
-const getOrdersList = async () =>{
+// Funcion para obtener el listado de todos los productos
+const getProductsList = async () =>{
     try {
         await pgClient.connect()
         const query = `
         SELECT 
         * 
         FROM 
-        "orders"`
+        "products"`
         const res = await pgClient.query(query)
         await pgClient.end()
         return Promise.resolve(res.rows)
@@ -22,15 +22,15 @@ const getOrdersList = async () =>{
     }
 }
 
-// Funcion para agregar ordenes
-const addOrder = async (order) =>{
+// Funcion para agregar productos
+const addProduct = async (product) =>{
     try {
         await pgClient.connect()
         const query = `
             INSERT INTO 
-            orders(client, products, status, dataEntry, dataProcessed) 
+            products(name, price, image, type, dataEntry) 
             VALUES 
-            ('${order.client}', '${order.products}', '${order.status}', '${order.dataEntry}', '${order.dataProcessed}');`
+            ('${product.name}', '${product.price}', '${product.image}', '${product.type}', '${product.dataEntry}');`
         const res = await pgClient.query(query)
         await pgClient.end()
         return Promise.resolve(res)
@@ -42,17 +42,17 @@ const addOrder = async (order) =>{
     }
 }
 
-// Funcion para buscar una orden en específica CON ID
-const getSpecificOrderById = async (orderID) =>{
+// Funcion para buscar un producto en específico CON ID
+const getSpecificProductById = async (productID) =>{
     try {
         await pgClient.connect()
         const query = `
             SELECT 
             * 
             FROM 
-            "orders" 
+            "products" 
             WHERE 
-            "orderid" = '${orderID}'`
+            "productid" = '${productID}'`
         const res = await pgClient.query(query)
         await pgClient.end()
         return Promise.resolve(res.rows)
@@ -64,17 +64,17 @@ const getSpecificOrderById = async (orderID) =>{
     }
 }
 
-// Funcion para actualizar una orden CON ID
-const updateOrderByID = async (orderID, order) =>{
+// Funcion para actualizar un producto CON ID
+const updateProductByID = async (productID, product) =>{
     try {
         await pgClient.connect()
         const query = `
             UPDATE 
-            "orders" 
+            "products" 
             SET 
-            client = '${order.client}', products ='${order.products}', status = '${order.status}', dataEntry = '${order.dataEntry}', dataProcessed = '${order.dataProcessed}' 
+            name = '${product.name}', price ='${product.price}', image = '${product.image}', type = '${product.type}', dataEntry = '${product.dataEntry}' 
             WHERE 
-            "orderid" = '${orderID}'`
+            "productid" = '${productID}'`
         const res = await pgClient.query(query)
         await pgClient.end()
         return Promise.resolve(res)
@@ -86,15 +86,15 @@ const updateOrderByID = async (orderID, order) =>{
     }
 }
 
-// Funcion para eliminar una orden CON ID
-const deleteOrderById = async (orderID) =>{
+// Funcion para eliminar un producto CON ID
+const deleteProductById = async (productID) =>{
     try {
         await pgClient.connect()
         const query = `
             DELETE FROM 
-            "orders" 
+            "products" 
             WHERE 
-            "orderid" = '${orderID}'`
+            "productid" = '${productID}'`
         const res = await pgClient.query(query)
         await pgClient.end()
         return Promise.resolve(res)
@@ -106,4 +106,4 @@ const deleteOrderById = async (orderID) =>{
     }
 }
 
-module.exports = { getOrdersList, addOrder, getSpecificOrderById, updateOrderByID, deleteOrderById }
+module.exports = { getProductsList, addProduct, getSpecificProductById, updateProductByID, deleteProductById }
