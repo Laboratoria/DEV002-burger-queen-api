@@ -1,6 +1,15 @@
-const { addUser, getUsersList, getSpecificUserByEmail, getSpecificUserById, updateUserByEmail, updateUserByID, deleteUserByEmail, deleteUserById } = require('../controller/users')
-
 const bcrypt = require('bcrypt');
+
+const { 
+  addUser, 
+  getUsersList, 
+  getSpecificUserByEmail, 
+  getSpecificUserById, 
+  updateUserByEmail, 
+  updateUserByID, 
+  deleteUserByEmail, 
+  deleteUserById 
+} = require('../controller/users')
 
 const {
   isAdmin
@@ -75,9 +84,9 @@ module.exports = (app, next) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
+   * isAdmin
    */
-  // app.get('/users', requireAdmin, getUsers); 
-  app.get('/users', isAdmin, async(req, resp, next) => {
+  app.get('/users', async(req, resp, next) => {
     try {
       const userList = await getUsersList()
       resp.send(userList)
@@ -104,8 +113,6 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  // app.get('/users/:uid', requireAuth, (req, resp) => {
-  // });
   app.get('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
@@ -151,8 +158,8 @@ module.exports = (app, next) => {
   app.post('/users', isAdmin, async(req, resp, next) => {
     try {
       const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role} 
-      const userInfo = await addUser(user)
-      resp.send(userInfo)
+      await addUser(user)
+      resp.send('User created')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -182,14 +189,12 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  // app.put('/users/:uid', requireAuth, (req, resp, next) => { updateUserByID
-  // });
   app.put('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
       const user = {'email': req.body.email, 'username': req.body.username, 'password': req.body.password, 'role': req.body.role}
-      const updatedUser = await updateUserByEmail(path, user)
-      resp.send(updatedUser)
+      await updateUserByEmail(path, user)
+      resp.send('User updated')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -200,8 +205,8 @@ module.exports = (app, next) => {
     try {
       const path = req.params.uid
       const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role}
-      const updatedUser = await updateUserByID(path, user)
-      resp.send(updatedUser)
+      await updateUserByID(path, user)
+      resp.send('User updated')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -225,13 +230,11 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  // app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  // });
   app.delete('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
-      const deteledUser = await deleteUserByEmail(path)
-      resp.send(deteledUser)
+      await deleteUserByEmail(path)
+      resp.send('User deleted')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -241,8 +244,8 @@ module.exports = (app, next) => {
   app.delete('/users/:uid', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.uid
-      const deteledUser = await deleteUserById(path)
-      resp.send(deteledUser)
+      await deleteUserById(path)
+      resp.send('User deleted')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 

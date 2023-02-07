@@ -1,7 +1,8 @@
 // Importamos el modelo de datos para los usuarios y las dependencias necesarias
+require('dotenv').config()
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-require('dotenv').config()
+
 const  { getUserByUsername } = require('./users')
 
 const SECRET = process.env.JWT_SECRET
@@ -21,7 +22,6 @@ const login = async (req, res)=> {
     }
 
     const userLoginInfo = await getUserByUsername(username)
-    console.log(userLoginInfo)
     if(bcrypt.compareSync(pass, userLoginInfo.password)) {
         const token = jwt.sign({ uid: userLoginInfo.uid, email: userLoginInfo.email, username: userLoginInfo.username, role: userLoginInfo.role }, SECRET);
         res.send(token)

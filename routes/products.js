@@ -3,7 +3,13 @@ const {
   isAdmin
 } = require('../middleware/auth');
 
-const { getProductsList, addProduct, getSpecificProductById, updateProductByID, deleteProductById } = require('../controller/products')
+const { 
+  getProductsList, 
+  addProduct, 
+  getSpecificProductById, 
+  updateProductByID, 
+  deleteProductById 
+} = require('../controller/products')
 
 /** @module products */
 module.exports = (app, nextMain) => {
@@ -29,8 +35,6 @@ module.exports = (app, nextMain) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    */
-  // app.get('/products', requireAuth, (req, resp, next) => {
-  // });
   app.get('/products', isAuthenticated, async(req, resp, next) => {
     try {
       const productsList = await getProductsList()
@@ -57,8 +61,6 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si el producto con `productId` indicado no existe
    */
-  // app.get('/products/:productId', requireAuth, (req, resp, next) => {
-  // });
   app.get('/products/:productId', isAuthenticated, async(req, resp, next) => {
     try {
       const path = req.params.productId
@@ -92,13 +94,11 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  // app.post('/products', requireAdmin, (req, resp, next) => {
-  // });
   app.post('/products', isAdmin, async(req, resp, next) => {
     try {
-      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'dataEntry': req.body.dataEntry} 
-      const productInfo = await addProduct(product)
-      resp.send(productInfo)
+      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
+      await addProduct(product)
+      resp.send('Product creadted')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -128,14 +128,12 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  // app.put('/products/:productId', requireAdmin, (req, resp, next) => {
-  // });
   app.put('/products/:productId', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.productId
-      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'dataEntry': req.body.dataEntry} 
-      const updatedProduct = await updateProductByID(path, product)
-      resp.send(updatedProduct)
+      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
+      await updateProductByID(path, product)
+      resp.send('Product updated')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -160,13 +158,11 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es ni admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  // app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-  // });
   app.delete('/products/:productId', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.productId
-      const deteledProduct = await deleteProductById(path)
-      resp.send(deteledProduct)
+      await deleteProductById(path)
+      resp.send('Product deleted')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 

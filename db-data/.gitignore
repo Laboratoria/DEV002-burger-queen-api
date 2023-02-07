@@ -1,2 +1,5 @@
 *
 !.gitignore
+allowSQL.sh
+db_dev.sh
+db_prod.sh

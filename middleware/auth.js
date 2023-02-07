@@ -14,14 +14,12 @@ module.exports = () =>  (req, resp, next) => {
   if (type.toLowerCase() !== 'bearer') {
     return next();
   }
-  console.log(SECRET)
   jwt.verify(token, SECRET, async (err, decodedToken) => {
     if (err) {
       console.log(err)
       return next(403);
     }
     const userInfo = await getSpecificUserById(decodedToken.uid)
-    console.log(userInfo)
     if(userInfo.username === decodedToken.username){
       next()
     } else {
@@ -32,7 +30,6 @@ module.exports = () =>  (req, resp, next) => {
 
 module.exports.isAuthenticated = (req, resp, next) => {
   const { authorization } = req.headers;
-  console.log(authorization)
 
   if (!authorization) {
     return resp.status(401).send('No headers');
@@ -55,7 +52,6 @@ module.exports.isAuthenticated = (req, resp, next) => {
 
 module.exports.isAdmin = (req, resp, next) => {
   const { authorization } = req.headers;
-  console.log(authorization)
 
   if (!authorization) {
     return resp.status(401).send('No headers');

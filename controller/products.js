@@ -1,51 +1,49 @@
-const { Client } = require('pg')
+const { Pool } = require('pg')
+
 const config = require('../config');
-const pgClient = new Client({ connectionString: config.dbUrl });
+
+const pool = new Pool({ connectionString: config.dbUrl })
 
 // Funcion para obtener el listado de todos los productos
 const getProductsList = async () =>{
     try {
-        await pgClient.connect()
+        const client = await pool.connect()
         const query = `
         SELECT 
         * 
         FROM 
         "products"`
-        const res = await pgClient.query(query)
-        await pgClient.end()
+        const res = await client.query(query)
+        await client.end()
         return Promise.resolve(res.rows)
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
-    } finally {
-        await pgClient.end();
     }
 }
 
 // Funcion para agregar productos
 const addProduct = async (product) =>{
     try {
-        await pgClient.connect()
+        const client = await pool.connect()
         const query = `
             INSERT INTO 
-            products(name, price, image, type, dataEntry) 
+            products(name, price, image, type, productdataentry) 
             VALUES 
-            ('${product.name}', '${product.price}', '${product.image}', '${product.type}', '${product.dataEntry}');`
-        const res = await pgClient.query(query)
-        await pgClient.end()
+            ('${product.name}', '${product.price}', '${product.image}', '${product.type}', '${product.productdataentry}');`
+        const res = await client.query(query)
+        await client.end()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
-    } finally {
-        await pgClient.end();
     }
 }
 
 // Funcion para buscar un producto en específico CON ID
 const getSpecificProductById = async (productID) =>{
     try {
-        await pgClient.connect()
+        const client = await pool.connect()
         const query = `
             SELECT 
             * 
@@ -53,56 +51,50 @@ const getSpecificProductById = async (productID) =>{
             "products" 
             WHERE 
             "productid" = '${productID}'`
-        const res = await pgClient.query(query)
-        await pgClient.end()
+        const res = await client.query(query)
+        await client.end()
         return Promise.resolve(res.rows)
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
-    } finally {
-        await pgClient.end();
     }
 }
 
 // Funcion para actualizar un producto CON ID
 const updateProductByID = async (productID, product) =>{
     try {
-        await pgClient.connect()
+        const client = await pool.connect()
         const query = `
             UPDATE 
             "products" 
             SET 
-            name = '${product.name}', price ='${product.price}', image = '${product.image}', type = '${product.type}', dataEntry = '${product.dataEntry}' 
+            name = '${product.name}', price ='${product.price}', image = '${product.image}', type = '${product.type}', productdataEntry = '${product.productdataentry}' 
             WHERE 
             "productid" = '${productID}'`
-        const res = await pgClient.query(query)
-        await pgClient.end()
+        const res = await client.query(query)
+        await client.end()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
-    } finally {
-        await pgClient.end();
     }
 }
 
 // Funcion para eliminar un producto CON ID
 const deleteProductById = async (productID) =>{
     try {
-        await pgClient.connect()
+        const client = await pool.connect()
         const query = `
             DELETE FROM 
             "products" 
             WHERE 
             "productid" = '${productID}'`
-        const res = await pgClient.query(query)
-        await pgClient.end()
+        const res = await client.query(query)
+        await client.end()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
-    } finally {
-        await pgClient.end();
     }
 }
 
