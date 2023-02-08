@@ -86,7 +86,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    * isAdmin
    */
-  app.get('/users', async(req, resp, next) => {
+  app.get('/users', isAdmin, async(req, resp, next) => {
     try {
       const userList = await getUsersList()
       resp.send(userList)

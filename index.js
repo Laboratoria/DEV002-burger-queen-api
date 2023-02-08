@@ -47,9 +47,9 @@ routes(app, (err) => {
 
   app.use(errorHandler);
 
-  app.listen(port, () => {
+  app.listen(8080, () => {
     console.info(`App listening on port ${port}`);
   });
 });
 
-module.exports = { express };
+module.exports = { app };
