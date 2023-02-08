@@ -32,7 +32,7 @@ module.exports.isAuthenticated = (req, resp, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return resp.status(401).send('No headers');
+    return resp.status(401).send('Unauthorized');
   }
 
   const [type, token] = authorization.split(' ');
@@ -44,7 +44,7 @@ module.exports.isAuthenticated = (req, resp, next) => {
   jwt.verify(token, SECRET, async (err, decodedToken) => {
     if (err) {
       console.log(err)
-      return next(403);
+      return resp.status(403).send('Do not have authorization');
     }
     next()
   })
@@ -54,7 +54,7 @@ module.exports.isAdmin = (req, resp, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return resp.status(401).send('No headers');
+    return resp.status(401).send('Unauthorized');
   }
 
   const [type, token] = authorization.split(' ');
@@ -66,12 +66,12 @@ module.exports.isAdmin = (req, resp, next) => {
   jwt.verify(token, SECRET, async (err, decodedToken) => {
     if (err) {
       console.log(err)
-      return next(403);
+      return resp.status(401).send('Unauthorized');
     }
     if(decodedToken.role === 'admin'){
       next()
     } else {
-      return next(401);
+      return resp.status(403).send('Do not have authorization');
     }
   })
 };

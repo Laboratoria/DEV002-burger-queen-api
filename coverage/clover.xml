@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1675817182405" clover="3.2.0">
-  <project timestamp="1675817182405" name="All files">
+<coverage generated="1675866526561" clover="3.2.0">
+  <project timestamp="1675866526561" name="All files">
     <metrics statements="516" coveredstatements="227" conditionals="68" coveredconditionals="22" methods="68" coveredmethods="28" elements="652" coveredelements="277" complexity="0" loc="516" ncloc="516" packages="4" files="15" classes="15"/>
     <package name="Burger-queen-api">
       <metrics statements="29" coveredstatements="28" conditionals="13" coveredconditionals="8" methods="2" coveredmethods="2"/>
