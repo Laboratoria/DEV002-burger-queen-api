@@ -53,7 +53,7 @@ const getSpecificProductById = async (productID) =>{
             "productid" = '${productID}'`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res.rows)
+        return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -98,4 +98,10 @@ const deleteProductById = async (productID) =>{
     }
 }
 
-module.exports = { getProductsList, addProduct, getSpecificProductById, updateProductByID, deleteProductById }
+module.exports = { 
+    getProductsList, 
+    addProduct, 
+    getSpecificProductById, 
+    updateProductByID, 
+    deleteProductById
+}

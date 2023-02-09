@@ -22,7 +22,7 @@ module.exports = (app, nextMain) => {
     /**
      * @name POST /orders/product
      */
-    app.post('/orders/product', isAdmin, async(req, resp, next) => {
+    app.post('/orders/product', isAuthenticated, async(req, resp, next) => {
         try {
             const product = {'qty': req.body.qty, 'name': req.body.name} 
             await addProductOrder(product)

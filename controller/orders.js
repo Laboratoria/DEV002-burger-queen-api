@@ -53,7 +53,7 @@ const getSpecificOrderById = async (orderID) =>{
             "orderid" = '${orderID}'`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res.rows)
+        return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -68,7 +68,7 @@ const updateOrderByID = async (orderID, order) =>{
             UPDATE 
             "orders" 
             SET 
-            client = '${order.client}', products ='${order.products}', status = '${order.status}', orderDataEntry = '${order.orderDataEntry}', dataProcessed = '${order.dataProcessed}' 
+            client = '${order.client}', products ='${order.products}', status = '${order.status}', orderdataentry = '${order.orderdataentry}', dataprocessed = '${order.dataprocessed}' 
             WHERE 
             "orderid" = '${orderID}'`
         const res = await client.query(query)

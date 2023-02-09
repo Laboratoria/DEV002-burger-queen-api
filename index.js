@@ -47,7 +47,7 @@ routes(app, (err) => {
 
   app.use(errorHandler);
 
-  app.listen(8080, () => {
+  app.listen(port, () => {
     console.info(`App listening on port ${port}`);
   });
 });

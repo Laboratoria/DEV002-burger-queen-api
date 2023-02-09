@@ -74,7 +74,7 @@ const getSpecificUserByEmail = async (email) =>{
             "email" = '${email}'`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res.rows)
+        return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
         return Promise.reject(error)

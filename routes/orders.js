@@ -72,8 +72,13 @@ module.exports = (app, nextMain) => {
   app.get('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
     try {
       const path = req.params.orderId
-      const specificOrder = await getSpecificOrderById(path)
-      resp.send(specificOrder)
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        const specificOrder = await getSpecificOrderById(path)
+        resp.send(specificOrder)
+      }  else {
+        resp.status(404).send('Order ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -148,9 +153,14 @@ module.exports = (app, nextMain) => {
   app.put('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
     try {
       const path = req.params.orderId
-      const order = {'client': req.body.client, 'products':req.body.products, 'status': req.body.status, 'orderDataEntry': req.body.orderDataEntry, 'dataProcessed': req.body.dataProcessed} 
-      await updateOrderByID(path, order)
-      resp.send('Order updated')
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        const order = {'client': req.body.client, 'products':req.body.products, 'status': req.body.status, 'orderdataentry': req.body.orderDataEntry, 'dataprocessed': req.body.dataProcessed} 
+        await updateOrderByID(path, order)
+        resp.send('Order updated')
+      } else {
+        resp.status(404).send('Order ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -181,8 +191,13 @@ module.exports = (app, nextMain) => {
   app.delete('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
     try {
       const path = req.params.orderId
-      await deleteOrderById(path)
-      resp.send('Order deleted')
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        await deleteOrderById(path)
+        resp.send('Order deleted')
+      }  else {
+        resp.status(404).send('Order ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 

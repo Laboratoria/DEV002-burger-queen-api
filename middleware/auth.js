@@ -32,7 +32,7 @@ module.exports.isAuthenticated = (req, resp, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return resp.status(401).send('Unauthorized');
+    return resp.status(401).send('Unauthorized.');
   }
 
   const [type, token] = authorization.split(' ');
@@ -44,7 +44,7 @@ module.exports.isAuthenticated = (req, resp, next) => {
   jwt.verify(token, SECRET, async (err, decodedToken) => {
     if (err) {
       console.log(err)
-      return resp.status(403).send('Do not have authorization');
+      return resp.status(403).send(`You don't have permission to access / on this server.`);
     }
     next()
   })
@@ -54,7 +54,7 @@ module.exports.isAdmin = (req, resp, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
-    return resp.status(401).send('Unauthorized');
+    return resp.status(401).send('Unauthorized.');
   }
 
   const [type, token] = authorization.split(' ');
@@ -71,22 +71,7 @@ module.exports.isAdmin = (req, resp, next) => {
     if(decodedToken.role === 'admin'){
       next()
     } else {
-      return resp.status(403).send('Do not have authorization');
+      return resp.status(403).send(`You don't have permission to access / on this server.`);
     }
   })
 };
-
-// module.exports.requireAuth = (req, resp, next) => (
-//   (!module.exports.isAuthenticated(req))
-//     ? next(401)
-//     : next()
-// );
-
-// module.exports.requireAdmin = (req, resp, next) => (
-//   // eslint-disable-next-line no-nested-ternary
-//   (!module.exports.isAuthenticated(req))
-//     ? next(401)
-//     : (!module.exports.isAdmin(req))
-//       ? next(403)
-//       : next()
-// );

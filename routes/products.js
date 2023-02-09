@@ -8,7 +8,7 @@ const {
   addProduct, 
   getSpecificProductById, 
   updateProductByID, 
-  deleteProductById 
+  deleteProductById
 } = require('../controller/products')
 
 /** @module products */
@@ -64,8 +64,13 @@ module.exports = (app, nextMain) => {
   app.get('/products/:productId', isAuthenticated, async(req, resp, next) => {
     try {
       const path = req.params.productId
-      const specificProduct = await getSpecificProductById(path)
-      resp.send(specificProduct)
+      const productID = await getSpecificProductById(path)
+      if (productID) {
+        const specificProduct = await getSpecificProductById(path)
+        resp.send(specificProduct)
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -98,7 +103,7 @@ module.exports = (app, nextMain) => {
     try {
       const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
       await addProduct(product)
-      resp.send('Product creadted')
+      resp.send('Product created')
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -131,9 +136,14 @@ module.exports = (app, nextMain) => {
   app.put('/products/:productId', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.productId
-      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
-      await updateProductByID(path, product)
-      resp.send('Product updated')
+      const productID = await getSpecificProductById(path)
+      if(productID){
+        const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
+        await updateProductByID(path, product)
+        resp.send('Product updated')
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -161,8 +171,13 @@ module.exports = (app, nextMain) => {
   app.delete('/products/:productId', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.productId
-      await deleteProductById(path)
-      resp.send('Product deleted')
+      const productID = await getSpecificProductById(path)
+      if (productID) {
+        await deleteProductById(path)
+        resp.send('Product deleted')
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 

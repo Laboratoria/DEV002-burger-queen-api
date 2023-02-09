@@ -116,8 +116,13 @@ module.exports = (app, next) => {
   app.get('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
-      const specificUser = await getSpecificUserByEmail(path)
-      resp.send(specificUser)
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail){
+        const specificUser = await getSpecificUserByEmail(path)
+        resp.send(specificUser)
+      } else {
+        resp.status(404).send('User email not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -127,8 +132,13 @@ module.exports = (app, next) => {
   app.get('/users/:uid', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.uid
-      const specificUser = await getSpecificUserById(path)
-      resp.send(specificUser)
+      const userID = await getSpecificUserById(path)
+      if (userID) {
+        const specificUser = await getSpecificUserById(path)
+        resp.send(specificUser)
+      } else {
+        resp.status(404).send('User ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -192,9 +202,14 @@ module.exports = (app, next) => {
   app.put('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
-      const user = {'email': req.body.email, 'username': req.body.username, 'password': req.body.password, 'role': req.body.role}
-      await updateUserByEmail(path, user)
-      resp.send('User updated')
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail){
+        const user = {'email': req.body.email, 'username': req.body.username, 'password': req.body.password, 'role': req.body.role}
+        await updateUserByEmail(path, user)
+        resp.send('User updated')
+      } else {
+        resp.status(404).send('User email not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -204,9 +219,14 @@ module.exports = (app, next) => {
   app.put('/users/:uid', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.uid
-      const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role}
-      await updateUserByID(path, user)
-      resp.send('User updated')
+      const userID = await getSpecificUserById(path)
+      if (userID){
+        const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role}
+        await updateUserByID(path, user)
+        resp.send('User updated')
+      } else {
+        resp.status(404).send('User ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -233,8 +253,13 @@ module.exports = (app, next) => {
   app.delete('/users/email/:email', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.email
-      await deleteUserByEmail(path)
-      resp.send('User deleted')
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail) {
+        await deleteUserByEmail(path)
+        resp.send('User deleted')
+      } else {
+        resp.status(404).send('User email not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -244,8 +269,13 @@ module.exports = (app, next) => {
   app.delete('/users/:uid', isAdmin, async(req, resp, next) => {
     try {
       const path = req.params.uid
-      await deleteUserById(path)
-      resp.send('User deleted')
+      const userID = await getSpecificUserById(path)
+      if (userID) {
+        await deleteUserById(path)
+        resp.send('User deleted')
+      } else {
+        resp.status(404).send('User ID not found')
+      }
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
