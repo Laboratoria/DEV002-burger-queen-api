@@ -84,7 +84,6 @@ module.exports = (app, next) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
-   * isAdmin
    */
   app.get('/users', isAdmin, async(req, resp, next) => {
     try {

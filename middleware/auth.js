@@ -68,7 +68,7 @@ module.exports.isAdmin = (req, resp, next) => {
       console.log(err)
       return resp.status(401).send('Unauthorized');
     }
-    if(decodedToken.role === 'admin'){
+    if(decodedToken.role === 'admin' || 'superadmin'){
       next()
     } else {
       return resp.status(403).send(`You don't have permission to access / on this server.`);

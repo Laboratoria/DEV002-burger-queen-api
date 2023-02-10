@@ -1,22 +1,6 @@
-DROP TABLE restaurants;
-CREATE TABLE IF NOT EXISTS restaurants(
-    id serial PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
-);
-
-DROP TABLE restaurantadmi;
-CREATE TABLE IF NOT EXISTS restaurantadmi(
-    id serial PRIMARY KEY,
-    email VARCHAR(50) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(50) NOT NULL,
-    role VARCHAR(50) NOT NULL,
-    restaurantname VARCHAR(50) NOT NULL
-);
-
 DROP TABLE users;
 DROP TYPE roles;
-CREATE TYPE roles AS ENUM ('admin', 'waiter', 'chef');
+CREATE TYPE roles AS ENUM ('superadmin', 'admin', 'waiter', 'chef');
 CREATE TABLE IF NOT EXISTS users(
     uid serial PRIMARY KEY,
     email VARCHAR(50) UNIQUE NOT NULL,
@@ -53,3 +37,5 @@ CREATE TABLE IF NOT EXISTS productorder(
     qty INT NOT NULL,
     name VARCHAR(50) NOT NULL
 );
+
+INSERT INTO users(email, username, password, role) VALUES ('super@admin.com', 'superadmin', '$2a$10$OOSMydd6mcctroE6ZsWHt.hlqOXqKCKYMJyhnCBECXQLr8SSyUwFG', 'superadmin');
