@@ -28,12 +28,14 @@ const addOrder = async (order) =>{
         const client = await pool.connect()
         const query = `
             INSERT INTO 
-            orders(client, products, status, orderDataEntry, dataProcessed) 
+            orders(client_id, status, order_data_entry, data_processed) 
             VALUES 
-            ('${order.client}', '${order.products}', '${order.status}', '${order.orderDataEntry}', '${order.dataProcessed}');`
+            ('${order.client_id}', '${order.status}', '${order.order_data_entry}', '${order.data_processed}')
+            RETURNING
+            order_no;`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res)
+        return Promise.resolve(res.rows.pop())
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -49,11 +51,19 @@ const getSpecificOrderById = async (orderID) =>{
             * 
             FROM 
             "orders" 
+            JOIN
+            "productorder"
+            ON
+            "orders"."order_no" = "productorder"."order_no"
+            JOIN
+            "products"
+            ON
+            "productorder"."product_id" = "products"."product_id"
             WHERE 
-            "orderid" = '${orderID}'`
+            "orders"."order_no" = '${orderID}'`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res.rows.pop() || "")
+        return Promise.resolve(res.rows || "")
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -68,9 +78,9 @@ const updateOrderByID = async (orderID, order) =>{
             UPDATE 
             "orders" 
             SET 
-            client = '${order.client}', products ='${order.products}', status = '${order.status}', orderdataentry = '${order.orderdataentry}', dataprocessed = '${order.dataprocessed}' 
+            client_id = '${order.client_id}', status = '${order.status}', order_data_entry = '${order.order_data_entry}', data_processed = '${order.data_processed}' 
             WHERE 
-            "orderid" = '${orderID}'`
+            "order_no" = '${orderID}'`
         const res = await client.query(query)
         await client.end()
         return Promise.resolve(res)
@@ -88,7 +98,7 @@ const deleteOrderById = async (orderID) =>{
             DELETE FROM 
             "orders" 
             WHERE 
-            "orderid" = '${orderID}'`
+            "order_no" = '${orderID}'`
         const res = await client.query(query)
         await client.end()
         return Promise.resolve(res)

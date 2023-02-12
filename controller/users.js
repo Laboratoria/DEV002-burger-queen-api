@@ -181,6 +181,26 @@ const deleteUserById = async (uid) =>{
     }
 }
 
+// Funcion para obtener los clientes
+// const getClientList = async () =>{
+//     try {
+//         const client = await pool.connect()
+//         const query = `
+//             SELECT 
+//             * 
+//             FROM 
+//             "users"
+//             WHERE
+//             "role" = "roles"."client"`
+//         const res = await client.query(query)
+//         await client.end()
+//         return Promise.resolve(res.rows)
+//     } catch (error) {
+//         console.log(error)
+//         return Promise.reject(error)
+//     }
+// }
+
 module.exports = { 
     addUser, getUsersList, 
     getSpecificUserByEmail, 
@@ -189,5 +209,5 @@ module.exports = {
     updateUserByID, 
     deleteUserByEmail, 
     deleteUserById, 
-    getUserByUsername 
+    getUserByUsername,
 }
