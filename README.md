@@ -158,7 +158,7 @@ _______________
 #### Obtener la información de una orden
 
 ```http
-  GET /orders/product/details
+  GET /orders/:orderId
 ```
 
 | Parámetro | Tipo     | Descripción                |
@@ -175,15 +175,26 @@ _______________
 | :------- | :------------------------- |
 | `string` | **Required**. Admin, Chef o Waiter |
 
-#### Crear un la información de cantidad de un producto
+#### Crear la información de cantidad de un producto en una ordern
 
 ```http
-  POST /orders/product
+  POST /orders/:orderId/products/:productId/:qty
 ```
 
 | Tipo     | Descripción                |
 | :------- | :------------------------- |
-| `string` | **Required**. Admin, Chef o Waiter y nombre del producto |
+| `string` | **Required**. Admin, Chef o Waiter |
+
+#### Eliminar la información de cantidad de un producto en una ordern
+
+```http
+  DELETE /productOrders/:productOrderId
+```
+
+| Parámetro | Tipo     | Descripción                |
+| :------- |:------- | :------------------------- |
+| `productID` |`string` | **Required**. Admin |
+
 
 #### Actualizar la información de una orden por su ID
 
