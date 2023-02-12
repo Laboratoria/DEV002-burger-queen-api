@@ -4,43 +4,36 @@ const {
 } = require('../middleware/auth');
 
 const { 
-    getProductOrderList,
     addProductOrder,
-    joinProductOrderWOrdersWProducts
+    deleteProductOrder
 } = require('../controller/productOrder')
 
-module.exports = (app, nextMain) => {
-    app.get('/orders/product', isAuthenticated, async(req, resp, next) => {
-        try {
-            const productOrderList = await getProductOrderList()
-            resp.send(productOrderList)
-        } catch (error) {
-            resp.status(500).send(error) 
-        }
-    });
-    
+module.exports = (app, nextMain) => {    
     /**
-     * @name POST /orders/product
+     * @name POST /orders/:orderId/products/:productId/:qty
      */
-    app.post('/orders/product', isAuthenticated, async(req, resp, next) => {
+    app.post('/orders/:orderId/products/:productId/:qty', isAuthenticated, async(req, resp, next) => {
         try {
-            const product = {'qty': req.body.qty, 'name': req.body.name} 
-            await addProductOrder(product)
-            resp.send('Product added to order')
+            const {orderId, productId, qty} = req.params
+            const product = {'order_no': orderId, 'product_id': productId, 'qty': qty} 
+            const productAdded = await addProductOrder(product)
+            resp.send(productAdded)
         } catch (error) {
             console.log(error)
             resp.status(500).send(error) 
         }
     });
 
-    app.get('/orders/product/details', isAuthenticated, async(req, resp, next) => {
+    app.delete('/productOrders/:productOrderId', isAuthenticated, async(req, resp, next) =>{
         try {
-            const joinedOrderList = await joinProductOrderWOrdersWProducts()
-            resp.send(joinedOrderList)
+            const {productOrderId} = req.params
+            await deleteProductOrder(productOrderId)
+            resp.send('Deleted')
         } catch (error) {
-            resp.status(500).send(error) 
+            console.log(error)
+            return Promise.reject(error)
         }
-    });
+    })
 
     nextMain();
 };

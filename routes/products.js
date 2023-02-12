@@ -101,9 +101,9 @@ module.exports = (app, nextMain) => {
    */
   app.post('/products', isAdmin, async(req, resp, next) => {
     try {
-      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
-      await addProduct(product)
-      resp.send('Product created')
+      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'product_data_entry': req.body.product_data_entry} 
+      const productID = await addProduct(product)
+      resp.send(productID)
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -138,7 +138,7 @@ module.exports = (app, nextMain) => {
       const path = req.params.productId
       const productID = await getSpecificProductById(path)
       if(productID){
-        const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'productdataentry': req.body.productDataEntry} 
+        const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'product_data_entry': req.body.product_data_entry} 
         await updateProductByID(path, product)
         resp.send('Product updated')
       } else {

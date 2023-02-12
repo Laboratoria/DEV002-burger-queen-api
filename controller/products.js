@@ -28,12 +28,14 @@ const addProduct = async (product) =>{
         const client = await pool.connect()
         const query = `
             INSERT INTO 
-            products(name, price, image, type, productdataentry) 
+            products(name, price, image, type, product_data_entry) 
             VALUES 
-            ('${product.name}', '${product.price}', '${product.image}', '${product.type}', '${product.productdataentry}');`
+            ('${product.name}', '${product.price}', '${product.image}', '${product.type}', '${product.product_data_entry}')
+            RETURNING
+            product_id;`
         const res = await client.query(query)
         await client.end()
-        return Promise.resolve(res)
+        return Promise.resolve(res.rows.pop())
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
@@ -50,7 +52,7 @@ const getSpecificProductById = async (productID) =>{
             FROM 
             "products" 
             WHERE 
-            "productid" = '${productID}'`
+            "product_id" = '${productID}'`
         const res = await client.query(query)
         await client.end()
         return Promise.resolve(res.rows.pop() || "")
@@ -68,9 +70,9 @@ const updateProductByID = async (productID, product) =>{
             UPDATE 
             "products" 
             SET 
-            name = '${product.name}', price ='${product.price}', image = '${product.image}', type = '${product.type}', productdataEntry = '${product.productdataentry}' 
+            name = '${product.name}', price ='${product.price}', image = '${product.image}', type = '${product.type}', product_data_entry = '${product.product_data_entry}' 
             WHERE 
-            "productid" = '${productID}'`
+            "product_id" = '${productID}'`
         const res = await client.query(query)
         await client.end()
         return Promise.resolve(res)
@@ -88,7 +90,7 @@ const deleteProductById = async (productID) =>{
             DELETE FROM 
             "products" 
             WHERE 
-            "productid" = '${productID}'`
+            "product_id" = '${productID}'`
         const res = await client.query(query)
         await client.end()
         return Promise.resolve(res)

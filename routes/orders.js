@@ -113,9 +113,9 @@ module.exports = (app, nextMain) => {
    */
   app.post('/orders', isAuthenticated, async(req, resp, next) => {
     try {
-      const order = {'client': req.body.client, 'products':req.body.products, 'status': req.body.status, 'orderDataEntry': req.body.orderDataEntry, 'dataProcessed': req.body.dataProcessed} 
-      await addOrder(order)
-      resp.send('Order creadted')
+      const order = {'client_id': req.body.client_id, 'status': req.body.status, 'order_data_entry': req.body.order_data_entry, 'data_processed': req.body.data_processed} 
+      const orderCreated = await addOrder(order)
+      resp.send(orderCreated)
     } catch (error) {
       console.log(error)
       resp.status(500).send(error) 
@@ -155,7 +155,7 @@ module.exports = (app, nextMain) => {
       const path = req.params.orderId
       const orderID = await getSpecificOrderById(path)
       if (orderID){
-        const order = {'client': req.body.client, 'products':req.body.products, 'status': req.body.status, 'orderdataentry': req.body.orderDataEntry, 'dataprocessed': req.body.dataProcessed} 
+        const order = {'client_id': req.body.client_id, 'status': req.body.status, 'order_data_entry': req.body.order_data_entry, 'data_processed': req.body.data_processed} 
         await updateOrderByID(path, order)
         resp.send('Order updated')
       } else {
