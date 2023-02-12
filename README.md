@@ -8,7 +8,7 @@ _______________
 
 ### Instalar [Postman](https://www.postman.com/downloads/)
 
-### Utiliza las rutas indicadas más abajo colocando antes
+### Utiliza las rutas indicadas más abajo colocando antes:
 
 ```bash
   https://leburgerqueenrestaurant.onrender.com
