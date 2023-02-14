@@ -1,5 +1,4 @@
 const {
-    isAdmin,
     isAuthenticated
 } = require('../middleware/auth');
 
@@ -12,11 +11,13 @@ module.exports = (app, nextMain) => {
     /**
      * @name POST /orders/:orderId/products/:productId/:qty
      */
-    app.post('/orders/:orderId/products/:productId/:qty', isAuthenticated, async(req, resp, next) => {
+    app.post('/orders/:orderId/products', isAuthenticated, async(req, resp, next) => {
         try {
-            const {orderId, productId, qty} = req.params
-            const product = {'order_no': orderId, 'product_id': productId, 'qty': qty} 
-            const productAdded = await addProductOrder(product)
+            const { orderId } = req.params
+            const products = req.body.products.map(product => {
+                return { ...product, order_no: orderId }
+            })
+            const productAdded = await addProductOrder(products)
             resp.send(productAdded)
         } catch (error) {
             console.log(error)

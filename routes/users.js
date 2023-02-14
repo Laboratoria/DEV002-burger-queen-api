@@ -221,6 +221,7 @@ module.exports = (app, next) => {
       const userID = await getSpecificUserById(path)
       if (userID){
         const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role}
+        // const user = {...req.body}
         await updateUserByID(path, user)
         resp.send('User updated')
       } else {
