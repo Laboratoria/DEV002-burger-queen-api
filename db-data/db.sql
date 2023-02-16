@@ -5,7 +5,7 @@ DROP TYPE statusenum;
 DROP TABLE users;
 DROP TYPE roles;
 
-CREATE TYPE roles AS ENUM ('superadmin', 'admin', 'waiter', 'chef', 'client');
+CREATE TYPE roles AS ENUM ('superadmin', 'admin', 'waiter', 'chef');
 CREATE TABLE IF NOT EXISTS users(
     uid serial PRIMARY KEY,
     email VARCHAR(50) UNIQUE NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TYPE statusenum AS ENUM ('pending', 'canceled', 'delivering', 'delivered');
 CREATE TABLE IF NOT EXISTS orders(
     order_no serial PRIMARY KEY,
-    client_id INT REFERENCES users(uid) ON DELETE CASCADE ON UPDATE CASCADE,
+    client_name VARCHAR(50) NOT NULL,
     status statusenum NOT NULL,
     order_data_entry DATE NOT NULL,
     data_processed DATE 
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS orders(
 
 CREATE TABLE IF NOT EXISTS products(
     product_id serial PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(250) NOT NULL,
     price VARCHAR(50) NOT NULL,
     image VARCHAR(150) NOT NULL,
     type VARCHAR(50) NOT NULL,
