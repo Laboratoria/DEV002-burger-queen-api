@@ -28,9 +28,9 @@ const addOrder = async (order) =>{
         const client = await pool.connect()
         const query = `
             INSERT INTO 
-            orders(client_id, status, order_data_entry, data_processed) 
+            orders(client_name, status, order_data_entry, data_processed) 
             VALUES 
-            ('${order.client_id}', '${order.status}', '${order.order_data_entry}', '${order.data_processed}')
+            ('${order.client_name}', '${order.status}', '${order.order_data_entry}', '${order.data_processed}')
             RETURNING
             order_no;`
         const res = await client.query(query)
@@ -78,7 +78,7 @@ const updateOrderByID = async (orderID, order) =>{
             UPDATE 
             "orders" 
             SET 
-            client_id = '${order.client_id}', status = '${order.status}', order_data_entry = '${order.order_data_entry}', data_processed = '${order.data_processed}' 
+            client_name = '${order.client_name}', status = '${order.status}', order_data_entry = '${order.order_data_entry}', data_processed = '${order.data_processed}' 
             WHERE 
             "order_no" = '${orderID}'`
         const res = await client.query(query)

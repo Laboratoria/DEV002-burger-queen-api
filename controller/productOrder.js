@@ -9,8 +9,8 @@ const addProductOrder = async (productOrders) =>{
         const createString = (productOrders) => {
             let query = "INSERT INTO productorder(product_id, order_no, qty) VALUES "
             let index = 0
-            productOrders.map(po => {
-                query += `(${po.product_id}, ${po.order_no}, ${po.qty}) `
+            productOrders.map(pro => {
+                query += `(${pro.product_id}, ${pro.order_no}, ${pro.qty}) `
                 index++
                 if (index < productOrders.length) {
                     query += ","
