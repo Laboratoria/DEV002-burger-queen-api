@@ -1,4 +1,6 @@
 const express = require('express');
+const cors = require("cors");
+
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
 const errorHandler = require('./middleware/error');
@@ -16,6 +18,13 @@ console.log(http.STATUS_CODES)
 const { port, dbUrl, secret } = config;
 const app = express();
 
+// configuración cors
+const corsOptions ={
+  origin:'*', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200,
+}
+
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
 const pgClient = new pg.Client({ connectionString: config.dbUrl });
 
@@ -27,7 +36,6 @@ const pgClient = new pg.Client({ connectionString: config.dbUrl });
 
 app.set('config', config);
 app.set('pkg', pkg);
-app.use(express.json())
 
 /* .urlencoded cuando es { extended: true } permite ingresar a información de los formularios,
 cuando es { extended: false } es lo contrario */
@@ -36,8 +44,9 @@ cuando es { extended: false } es lo contrario */
 por lo que no es encesario colocarle () a la función que cumple con esos parámetros*/
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 app.use(authMiddleware(secret));
+app.use(express.json())
+app.use(cors(corsOptions))
 
 // Registrar rutas
 routes(app, (err) => {
