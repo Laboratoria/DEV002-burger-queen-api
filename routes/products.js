@@ -1,7 +1,15 @@
 const {
-  requireAuth,
-  requireAdmin,
+  isAuthenticated,
+  isAdmin
 } = require('../middleware/auth');
+
+const { 
+  getProductsList, 
+  addProduct, 
+  getSpecificProductById, 
+  updateProductByID, 
+  deleteProductById
+} = require('../controller/products')
 
 /** @module products */
 module.exports = (app, nextMain) => {
@@ -27,7 +35,13 @@ module.exports = (app, nextMain) => {
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
    */
-  app.get('/products', requireAuth, (req, resp, next) => {
+  app.get('/products', isAuthenticated, async(req, resp, next) => {
+    try {
+      const productsList = await getProductsList()
+      resp.send(productsList)
+    } catch (error) {
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -47,7 +61,20 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.get('/products/:productId', requireAuth, (req, resp, next) => {
+  app.get('/products/:productId', isAuthenticated, async(req, resp, next) => {
+    try {
+      const path = req.params.productId
+      const productID = await getSpecificProductById(path)
+      if (productID) {
+        const specificProduct = await getSpecificProductById(path)
+        resp.send(specificProduct)
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -72,7 +99,15 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.post('/products', requireAdmin, (req, resp, next) => {
+  app.post('/products', isAdmin, async(req, resp, next) => {
+    try {
+      const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'product_data_entry': req.body.product_data_entry} 
+      const productID = await addProduct(product)
+      resp.send(productID)
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -98,7 +133,21 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.put('/products/:productId', requireAdmin, (req, resp, next) => {
+  app.put('/products/:productId', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.productId
+      const productID = await getSpecificProductById(path)
+      if(productID){
+        const product = {'name': req.body.name, 'price':req.body.price, 'image': req.body.image, 'type': req.body.type, 'product_data_entry': req.body.product_data_entry} 
+        await updateProductByID(path, product)
+        resp.send('Product updated')
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -119,7 +168,20 @@ module.exports = (app, nextMain) => {
    * @code {403} si no es ni admin
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
+  app.delete('/products/:productId', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.productId
+      const productID = await getSpecificProductById(path)
+      if (productID) {
+        await deleteProductById(path)
+        resp.send('Product deleted')
+      } else {
+        resp.status(404).send('Product ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   nextMain();

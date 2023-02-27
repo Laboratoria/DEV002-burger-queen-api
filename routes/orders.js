@@ -1,6 +1,14 @@
 const {
-  requireAuth,
+  isAuthenticated
 } = require('../middleware/auth');
+
+const { 
+  getOrdersList, 
+  addOrder, 
+  getSpecificOrderById, 
+  updateOrderByID, 
+  deleteOrderById 
+} = require('../controller/orders')
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -29,8 +37,15 @@ module.exports = (app, nextMain) => {
    * @response {Date} [orders[].dateProcessed] Fecha de cambio de `status` a `delivered`
    * @code {200} si la autenticación es correcta
    * @code {401} si no hay cabecera de autenticación
-   */
-  app.get('/orders', requireAuth, (req, resp, next) => {
+  */
+  //app.get('/orders', test2, test);
+  app.get('/orders', isAuthenticated, async(req, resp, next) => {
+    try {
+      const orderList = await getOrdersList()
+      resp.send(orderList)
+    } catch (error) {
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -54,7 +69,20 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si la orden con `orderId` indicado no existe
    */
-  app.get('/orders/:orderId', requireAuth, (req, resp, next) => {
+  app.get('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
+    try {
+      const path = req.params.orderId
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        const specificOrder = await getSpecificOrderById(path)
+        resp.send(specificOrder)
+      }  else {
+        resp.status(404).send('Order ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -83,7 +111,15 @@ module.exports = (app, nextMain) => {
    * @code {400} no se indica `userId` o se intenta crear una orden sin productos
    * @code {401} si no hay cabecera de autenticación
    */
-  app.post('/orders', requireAuth, (req, resp, next) => {
+  app.post('/orders', isAuthenticated, async(req, resp, next) => {
+    try {
+      const order = {'client_name': req.body.client_name, 'status': req.body.status, 'order_data_entry': req.body.order_data_entry, 'data_processed': req.body.data_processed} 
+      const orderCreated = await addOrder(order)
+      resp.send(orderCreated)
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -114,7 +150,21 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si la orderId con `orderId` indicado no existe
    */
-  app.put('/orders/:orderId', requireAuth, (req, resp, next) => {
+  app.put('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
+    try {
+      const path = req.params.orderId
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        const order = {'client_name': req.body.client_name, 'status': req.body.status, 'order_data_entry': req.body.order_data_entry, 'data_processed': req.body.data_processed} 
+        await updateOrderByID(path, order)
+        resp.send('Order updated')
+      } else {
+        resp.status(404).send('Order ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   /**
@@ -138,7 +188,20 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si el producto con `orderId` indicado no existe
    */
-  app.delete('/orders/:orderId', requireAuth, (req, resp, next) => {
+  app.delete('/orders/:orderId', isAuthenticated, async(req, resp, next) => {
+    try {
+      const path = req.params.orderId
+      const orderID = await getSpecificOrderById(path)
+      if (orderID){
+        await deleteOrderById(path)
+        resp.send('Order deleted')
+      }  else {
+        resp.status(404).send('Order ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   nextMain();

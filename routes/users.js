@@ -1,8 +1,18 @@
 const bcrypt = require('bcrypt');
 
+const { 
+  addUser, 
+  getUsersList, 
+  getSpecificUserByEmail, 
+  getSpecificUserById, 
+  updateUserByEmail, 
+  updateUserByID, 
+  deleteUserByEmail, 
+  deleteUserById 
+} = require('../controller/users')
+
 const {
-  requireAuth,
-  requireAdmin,
+  isAdmin
 } = require('../middleware/auth');
 
 const {
@@ -53,6 +63,7 @@ const initAdminUser = (app, next) => {
 
 /** @module users */
 module.exports = (app, next) => {
+  /* OBTENCIÓN de lista de usuarios */
   /**
    * @name GET /users
    * @description Lista usuarias
@@ -74,8 +85,17 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
    */
-  app.get('/users', requireAdmin, getUsers);
+  app.get('/users', isAdmin, async(req, resp, next) => {
+    try {
+      const userList = await getUsersList()
+      resp.send(userList)
+    } catch (error) {
+      resp.status(500).send(error) 
+    }
+  });
 
+  /* CABECERA = HEADERS */
+  /* OBTENCIÓN de usuario */
   /**
    * @name GET /users/:uid
    * @description Obtiene información de una usuaria
@@ -92,9 +112,39 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.get('/users/:uid', requireAuth, (req, resp) => {
+  app.get('/users/email/:email', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.email
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail){
+        const specificUser = await getSpecificUserByEmail(path)
+        resp.send(specificUser)
+      } else {
+        resp.status(404).send('User email not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
+  app.get('/users/:uid', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.uid
+      const userID = await getSpecificUserById(path)
+      if (userID) {
+        const specificUser = await getSpecificUserById(path)
+        resp.send(specificUser)
+      } else {
+        resp.status(404).send('User ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
+  });
+
+  /* CREACIÓN de usuario */
   /**
    * @name POST /users
    * @description Crea una usuaria
@@ -114,9 +164,18 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si ya existe usuaria con ese `email`
    */
-  app.post('/users', requireAdmin, (req, resp, next) => {
+  app.post('/users', isAdmin, async(req, resp, next) => {
+    try {
+      const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role} 
+      await addUser(user)
+      resp.send('User created')
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
-
+  
+  /* ACTUALIZACIÓN de usuario */
   /**
    * @name PUT /users
    * @description Modifica una usuaria
@@ -139,9 +198,42 @@ module.exports = (app, next) => {
    * @code {403} una usuaria no admin intenta de modificar sus `roles`
    * @code {404} si la usuaria solicitada no existe
    */
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
+  app.put('/users/email/:email', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.email
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail){
+        const user = {'email': req.body.email, 'username': req.body.username, 'password': req.body.password, 'role': req.body.role}
+        await updateUserByEmail(path, user)
+        resp.send('User updated')
+      } else {
+        resp.status(404).send('User email not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
+  app.put('/users/:uid', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.uid
+      const userID = await getSpecificUserById(path)
+      if (userID){
+        const user = {'email': req.body.email, 'username':req.body.username, 'password': req.body.password, 'role': req.body.role}
+        // const user = {...req.body}
+        await updateUserByID(path, user)
+        resp.send('User updated')
+      } else {
+        resp.status(404).send('User ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
+  });
+
+  /* ELIMINACIÓN de usuario SOLO POR ID */
   /**
    * @name DELETE /users
    * @description Elimina una usuaria
@@ -158,7 +250,36 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin o la misma usuaria
    * @code {404} si la usuaria solicitada no existe
    */
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
+  app.delete('/users/email/:email', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.email
+      const userEmail = await getSpecificUserByEmail(path)
+      if (userEmail) {
+        await deleteUserByEmail(path)
+        resp.send('User deleted')
+      } else {
+        resp.status(404).send('User email not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
+  });
+
+  app.delete('/users/:uid', isAdmin, async(req, resp, next) => {
+    try {
+      const path = req.params.uid
+      const userID = await getSpecificUserById(path)
+      if (userID) {
+        await deleteUserById(path)
+        resp.send('User deleted')
+      } else {
+        resp.status(404).send('User ID not found')
+      }
+    } catch (error) {
+      console.log(error)
+      resp.status(500).send(error) 
+    }
   });
 
   initAdminUser(app, next);

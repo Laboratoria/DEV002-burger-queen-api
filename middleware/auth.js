@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { getSpecificUserById } = require('../controller/users')
+const SECRET = process.env.JWT_SECRET
 
-module.exports = (secret) => (req, resp, next) => {
+module.exports = () =>  (req, resp, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -12,37 +14,64 @@ module.exports = (secret) => (req, resp, next) => {
   if (type.toLowerCase() !== 'bearer') {
     return next();
   }
-
-  jwt.verify(token, secret, (err, decodedToken) => {
+  jwt.verify(token, SECRET, async (err, decodedToken) => {
     if (err) {
+      console.log(err)
       return next(403);
     }
-
-    // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    const userInfo = await getSpecificUserById(decodedToken.uid)
+    if(userInfo.username === decodedToken.username){
+      next()
+    } else {
+      return next(401);
+    }
   });
 };
 
-module.exports.isAuthenticated = (req) => (
-  // TODO: decidir por la informacion del request si la usuaria esta autenticada
-  false
-);
+module.exports.isAuthenticated = (req, resp, next) => {
+  const { authorization } = req.headers;
 
-module.exports.isAdmin = (req) => (
-  // TODO: decidir por la informacion del request si la usuaria es admin
-  false
-);
+  if (!authorization) {
+    return resp.status(401).send('Unauthorized.');
+  }
 
-module.exports.requireAuth = (req, resp, next) => (
-  (!module.exports.isAuthenticated(req))
-    ? next(401)
-    : next()
-);
+  const [type, token] = authorization.split(' ');
 
-module.exports.requireAdmin = (req, resp, next) => (
-  // eslint-disable-next-line no-nested-ternary
-  (!module.exports.isAuthenticated(req))
-    ? next(401)
-    : (!module.exports.isAdmin(req))
-      ? next(403)
-      : next()
-);
+  if (type.toLowerCase() !== 'bearer') {
+    return next();
+  }
+
+  jwt.verify(token, SECRET, async (err, decodedToken) => {
+    if (err) {
+      console.log(err)
+      return resp.status(403).send(`You don't have permission to access / on this server.`);
+    }
+    next()
+  })
+};
+
+module.exports.isAdmin = (req, resp, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return resp.status(401).send('Unauthorized.');
+  }
+
+  const [type, token] = authorization.split(' ');
+
+  if (type.toLowerCase() !== 'bearer') {
+    return next();
+  }
+
+  jwt.verify(token, SECRET, async (err, decodedToken) => {
+    if (err) {
+      console.log(err)
+      return resp.status(401).send('Unauthorized');
+    }
+    if(decodedToken.role === "admin" || decodedToken.role ===  "superadmin"){
+      next()
+    } else {
+      return resp.status(403).send(`You don't have permission to access / on this server.`);
+    }
+  })
+};
