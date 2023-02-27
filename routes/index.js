@@ -1,3 +1,4 @@
+// Importamos los routers
 const auth = require('./auth');
 const users = require('./users');
 const products = require('./products');
@@ -6,7 +7,9 @@ const orders = require('./orders');
 const root = (app, next) => {
   const pkg = app.get('pkg');
   app.get('/', (req, res) => res.json({ name: pkg.name, version: pkg.version }));
-  app.all('*', (req, resp, nextAll) => nextAll(404));
+  // There is a special routing method, app.all(), used to load middleware
+  // functions at a path for all HTTP request methods.
+  app.all('*', (req, res, nextAll) => nextAll(404));
   return next();
 };
 
