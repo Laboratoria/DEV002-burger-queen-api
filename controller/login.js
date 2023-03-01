@@ -22,9 +22,10 @@ const login = async (req, res)=> {
     }
 
     const userLoginInfo = await getUserByUsername(username)
-    if (!userLoginInfo){
+    if (!userLoginInfo || !userLoginInfo.password){
         res.status(400).send("User not found.")
     }
+    console.log(userLoginInfo)
     if(bcrypt.compareSync(pass, userLoginInfo.password)) {
         const token = jwt.sign({ uid: userLoginInfo.uid, email: userLoginInfo.email, username: userLoginInfo.username, role: userLoginInfo.role }, SECRET);
         res.send(token)
