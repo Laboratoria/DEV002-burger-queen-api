@@ -37,10 +37,12 @@ module.exports = (app, nextMain) => {
    */
   app.get('/products', isAuthenticated, async(req, resp, next) => {
     try {
+      console.log('ruta')
       const productsList = await getProductsList()
-      resp.send(productsList)
+      return resp.send(productsList)
     } catch (error) {
-      resp.status(500).send(error) 
+      console.log(error)
+      return resp.status(500).send(error) 
     }
   });
 

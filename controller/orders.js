@@ -14,7 +14,7 @@ const getOrdersList = async () =>{
         FROM 
         "orders"`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows)
     } catch (error) {
         console.log(error)
@@ -34,7 +34,7 @@ const addOrder = async (order) =>{
             RETURNING
             order_no;`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop())
     } catch (error) {
         console.log(error)
@@ -62,7 +62,7 @@ const getSpecificOrderById = async (orderID) =>{
             WHERE 
             "orders"."order_no" = '${orderID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows || "")
     } catch (error) {
         console.log(error)
@@ -82,7 +82,7 @@ const updateOrderByID = async (orderID, order) =>{
             WHERE 
             "order_no" = '${orderID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -100,7 +100,7 @@ const deleteOrderById = async (orderID) =>{
             WHERE 
             "order_no" = '${orderID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)

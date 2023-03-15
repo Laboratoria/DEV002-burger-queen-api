@@ -26,12 +26,12 @@ const corsOptions ={
 }
 
 // TODO: Conexión a la Base de Datos (MongoDB o MySQL)
-const pgClient = new pg.Client({ connectionString: config.dbUrl });
+// const pgClient = new pg.Client({ connectionString: config.dbUrl });
 
 // pgClient.connect();
 // pgClient.query("SELECT NOW()", (err, res) => {
 //   console.log(err, res);
-//   pgClient.end();
+//   pgclient.release();
 // });
 
 app.set('config', config);
@@ -44,9 +44,9 @@ cuando es { extended: false } es lo contrario */
 por lo que no es encesario colocarle () a la función que cumple con esos parámetros*/
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
-app.use(authMiddleware(secret));
+// app.use(authMiddleware(secret));
 app.use(express.json())
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions))
 
 // Registrar rutas
 routes(app, (err) => {

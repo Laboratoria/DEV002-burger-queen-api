@@ -15,7 +15,7 @@ const getUserByUsername = async (username) =>{
             WHERE 
             "username" = '${username}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
@@ -35,7 +35,7 @@ const addUser = async (user) =>{
             VALUES 
             ('${user.email}', '${user.username}', '${hash}', '${user.role}');`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -53,7 +53,7 @@ const getUsersList = async () =>{
             FROM 
             "users"`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows)
     } catch (error) {
         console.log(error)
@@ -73,7 +73,7 @@ const getSpecificUserByEmail = async (email) =>{
             WHERE 
             "email" = '${email}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
@@ -93,7 +93,7 @@ const getSpecificUserById = async (uid) =>{
             WHERE 
             "uid" = '${uid}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
@@ -115,7 +115,7 @@ const updateUserByEmail = async (email, user) =>{
             WHERE 
             "email" = '${email}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -137,7 +137,7 @@ const updateUserByID = async (uid, user) =>{
             WHERE 
             "uid" = '${uid}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -155,7 +155,7 @@ const deleteUserByEmail = async (email) =>{
             WHERE 
             "email" = '${email}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -173,7 +173,7 @@ const deleteUserById = async (uid) =>{
             WHERE 
             "uid" = '${uid}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -193,7 +193,7 @@ const deleteUserById = async (uid) =>{
 //             WHERE
 //             "role" = "roles"."client"`
 //         const res = await client.query(query)
-//         await client.end()
+//         await client.release()
 //         return Promise.resolve(res.rows)
 //     } catch (error) {
 //         console.log(error)

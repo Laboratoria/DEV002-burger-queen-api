@@ -21,7 +21,7 @@ const addProductOrder = async (productOrders) =>{
         }
         const query = createString(productOrders)
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop())
     } catch (error) {
         console.log(error)
@@ -38,7 +38,7 @@ const deleteProductOrder = async (productOrderID) => {
             WHERE 
             "product_order_id" = '${productOrderID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)

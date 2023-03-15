@@ -14,7 +14,7 @@ const getProductsList = async () =>{
         FROM 
         "products"`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows)
     } catch (error) {
         console.log(error)
@@ -34,7 +34,7 @@ const addProduct = async (product) =>{
             RETURNING
             product_id;`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop())
     } catch (error) {
         console.log(error)
@@ -54,7 +54,7 @@ const getSpecificProductById = async (productID) =>{
             WHERE 
             "product_id" = '${productID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res.rows.pop() || "")
     } catch (error) {
         console.log(error)
@@ -74,7 +74,7 @@ const updateProductByID = async (productID, product) =>{
             WHERE 
             "product_id" = '${productID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
@@ -92,7 +92,7 @@ const deleteProductById = async (productID) =>{
             WHERE 
             "product_id" = '${productID}'`
         const res = await client.query(query)
-        await client.end()
+        await client.release()
         return Promise.resolve(res)
     } catch (error) {
         console.log(error)
