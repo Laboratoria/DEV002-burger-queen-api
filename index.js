@@ -46,7 +46,7 @@ por lo que no es encesario colocarle () a la función que cumple con esos parám
 app.use(express.urlencoded({ extended: false }));
 // app.use(authMiddleware(secret));
 app.use(express.json())
-// app.use(cors(corsOptions))
+app.use(cors(corsOptions))
 
 // Registrar rutas
 routes(app, (err) => {
